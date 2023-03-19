@@ -1,12 +1,12 @@
 from rest_framework import serializers
 from .models import *
-from django.conf import settings
-
 
 class StaffSerializer (serializers.ModelSerializer):
     class Meta:
         model = Staff
         fields = ['id', 'user', 'title', 'role']
+    
+    user = serializers.StringRelatedField()
 
 class TaskSerializer(serializers.ModelSerializer):
     class Meta:
@@ -29,10 +29,9 @@ class ReceiversSerializer(serializers.PrimaryKeyRelatedField):
         if staff_role == '1':
             return Staff.objects.exclude(role=staff_role)
         elif staff_role == '2':
-            return Staff.objects.exclude(role = '1').exclude(staff_role)
+            return Staff.objects.exclude(role = '1').exclude(role =staff_role)
         elif staff_role == '3':
-            return Staff.objects.exclude(role = '1').exclude(role = '2').exclude(staff_role)
-
+            return Staff.objects.exclude(role = '1').exclude(role = '2').exclude(role =staff_role)
 
 class CreateTaskSerializer(serializers.ModelSerializer):
     receivers = ReceiversSerializer() # List of allowed receivers

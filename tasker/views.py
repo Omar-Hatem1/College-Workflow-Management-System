@@ -1,7 +1,8 @@
 from django.shortcuts import render, get_object_or_404
 from rest_framework.decorators import api_view
-from rest_framework.viewsets import ModelViewSet
+from rest_framework.viewsets import ModelViewSet, GenericViewSet
 from rest_framework.mixins import ListModelMixin
+from rest_framework.generics import GenericAPIView, ListCreateAPIView
 from rest_framework.response import Response
 from .models import *
 from .serializers import *
@@ -21,7 +22,9 @@ class TasksViewSet (ModelViewSet):
     def get_serializer_context(self):
         return {'user_id': self.request.user.id, 'staff_role': self.request.user.staff.role ,'staff_id': self.request.user.staff.id}
 
-
+class ReceiversViewSet (ListModelMixin, GenericViewSet):
+    queryset = Staff.objects.select_related('user').all()
+    serializer_class = StaffSerializer 
 
 # class TaskResponseViewSet (ModelViewSet):
 #     queryset= TaskResponse.objects.all()

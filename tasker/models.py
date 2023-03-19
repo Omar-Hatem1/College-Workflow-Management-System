@@ -2,11 +2,11 @@ from django.db import models
 from django.conf import settings
 
 class Staff (models.Model):
-    dean = '1'
-    vice = '2'
-    head = '3'
-    Dr = '4'
-    TA = '4' 
+    dean = 'dean'
+    vice = 'vice'
+    head = 'head'
+    Dr = 'dr'
+    TA = 'ta' 
     role_types =[
         (dean, 'Dean'),
         (vice, 'Vice'),
@@ -23,8 +23,8 @@ class Staff (models.Model):
     (TA, 'TA')
     ]
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    role = models.CharField(max_length=1, choices=role_types)
-    title = models.CharField(max_length=150, choices=titles_types )
+    role = models.CharField(max_length=4, choices=role_types)
+    title = models.CharField(max_length=4, choices=titles_types )
     def __str__(self) -> str:
         return self.title + ' ' + self.user.first_name + ' ' + self.user.last_name   
 
