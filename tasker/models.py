@@ -25,8 +25,8 @@ class Staff (models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     role = models.CharField(max_length=4, choices=role_types)
     title = models.CharField(max_length=4, choices=titles_types )
-    def __str__(self) -> str:
-        return self.title + ' ' + self.user.first_name + ' ' + self.user.last_name   
+    # def __str__(self) -> str:
+    #     return self.title + ' ' + self.user.first_name + ' ' + self.user.last_name   
 
 
 class Task(models.Model):

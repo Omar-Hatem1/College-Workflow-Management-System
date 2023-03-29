@@ -8,10 +8,8 @@ from .models import *
 from .serializers import *
 
 
-
-
 class TasksViewSet (ModelViewSet):
-    queryset = Task.objects.all()
+    queryset = Task.objects.select_related('receivers__user').select_related('staff__user').all()
     #serializer_class =TaskSerializer
     def get_serializer_class(self):
         if self.request.method == 'GET':
@@ -20,11 +18,20 @@ class TasksViewSet (ModelViewSet):
             return CreateTaskSerializer
         return TaskSerializer
     def get_serializer_context(self):
-        print({'user_id': self.request.user.id, 'staff_role': self.request.user.staff.role ,'staff_id': self.request.user.staff.id})
+        #print({'user_id': self.request.user.id, 'staff_role': self.request.user.staff.role ,'staff_id': self.request.user.staff.id})
         return {'user_id': self.request.user.id, 'staff_role': self.request.user.staff.role ,'staff_id': self.request.user.staff.id}
 
 class ReceiversViewSet (ListModelMixin, GenericViewSet):
-    queryset = Staff.objects.select_related('user').all()
+    #queryset = Staff.objects.select_related('user').all()
+    def get_queryset(self):
+        staff_role = self.request.user.staff.role
+        if staff_role == 'dean':
+            #print (Staff.objects.select_related('user').exclude(role=staff_role)) # ?? Test code
+            return Staff.objects.select_related('user').exclude(role=staff_role)
+        elif staff_role == 'vice':
+            return Staff.objects.select_related('user').exclude(role = 'dean').exclude(role =staff_role)
+        elif staff_role == 'head':
+            return Staff.objects.select_related('user').exclude(role = 'dean').exclude(role = 'vice').exclude(role =staff_role)
     serializer_class = StaffSerializer 
 
 # class TaskResponseViewSet (ModelViewSet):

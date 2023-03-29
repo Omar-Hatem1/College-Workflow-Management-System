@@ -6,7 +6,7 @@ class StaffSerializer (serializers.ModelSerializer):
         model = Staff
         fields = ['id', 'user', 'title', 'role']
     
-    user = serializers.StringRelatedField()
+    user = serializers.StringRelatedField() 
 
 class TaskSerializer(serializers.ModelSerializer):
     class Meta:
@@ -16,17 +16,12 @@ class TaskSerializer(serializers.ModelSerializer):
     staff = StaffSerializer(Staff)
     receivers = StaffSerializer(Staff) 
 
-class TaskListSerializer(serializers.PrimaryKeyRelatedField):
-    def get_queryset(self):
-        staff_id = self.context['staff_id']
-        if staff_id == staff_id:
-            return Task.objects.filter(staff_id = self.receivers)
-
 
 class ReceiversSerializer(serializers.PrimaryKeyRelatedField):
     def get_queryset(self):
         staff_role = self.context['staff_role']
         if staff_role == 'dean':
+            #print (Staff.objects.exclude(role=staff_role))
             return Staff.objects.exclude(role=staff_role)
         elif staff_role == 'vice':
             return Staff.objects.exclude(role = 'dean').exclude(role =staff_role)
@@ -45,7 +40,11 @@ class CreateTaskSerializer(serializers.ModelSerializer):
         task = Task.objects.create(staff=staff, **self.validated_data)
         return task
 
-
+# class TaskListSerializer(serializers.PrimaryKeyRelatedField):
+#     def get_queryset(self):
+#         staff_id = self.context['staff_id']
+#         if staff_id == staff_id:
+#             return Task.objects.filter(staff_id = self.receivers)
 
 # class TaskResponseForeignKeySerializer(serializers.PrimaryKeyRelatedField):
 #     def get_queryset(self):

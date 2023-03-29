@@ -5,7 +5,7 @@ from . import views
 router = DefaultRouter()
 #router.register('receivers', views)
 router.register('tasks', views.TasksViewSet)
-router.register('receivers', views.ReceiversViewSet)
+router.register('receivers', views.ReceiversViewSet, basename='receivers')
 #router.register('response', views.TaskResponseViewSet)
 
 urlpatterns = [
