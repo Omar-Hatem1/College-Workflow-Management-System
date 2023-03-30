@@ -6,7 +6,14 @@ from rest_framework.generics import GenericAPIView, ListCreateAPIView
 from rest_framework.response import Response
 from .models import *
 from .serializers import *
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
 
+
+
+class TaskAdminViewSet (ListModelMixin,RetrieveModelMixin,DestroyModelMixin, GenericViewSet):
+    permission_classes = [IsAuthenticated, IsAdminUser]
+    queryset = Task.objects.select_related('receivers__user').select_related('staff__user').all()
+    serializer_class = TaskAdminSerializer
 
 class SentTasksViewSet (ModelViewSet):
     #queryset = Task.objects.select_related('receivers__user').select_related('staff__user').all()
@@ -19,7 +26,7 @@ class SentTasksViewSet (ModelViewSet):
     def get_serializer_class(self):
         if self.request.method == 'GET':
             return TaskSerializer
-        elif self.request.method == 'POST':
+        elif self.request.method == 'POST' or self.request.method == 'PUT':
             return CreateTaskSerializer
         return TaskSerializer
     def get_serializer_context(self):
@@ -47,16 +54,16 @@ class ReceiversViewSet (ListModelMixin,RetrieveModelMixin, GenericViewSet):
             return Staff.objects.select_related('user').exclude(role = 'dean').exclude(role = 'vice').exclude(role =staff_role)
     
 
-class TaskResponseViewSet (ListModelMixin,DestroyModelMixin,UpdateModelMixin, GenericViewSet):
-    #queryset= TaskResponse.objects.all()
-    def get_queryset(self, **kwargs):
-        task_id = self.kwargs['receivedtask_pk']
-        if task_id == task_id :
-            return TaskResponse.objects.filter(task = task_id)
+class TaskResponseViewSet (ListModelMixin,DestroyModelMixin,UpdateModelMixin,CreateModelMixin, GenericViewSet):
+    queryset= TaskResponse.objects.all()
+    # def get_queryset(self, **kwargs):
+    #     task_id = self.kwargs['response_pk']
+    #     if task_id == task_id :
+    #         return TaskResponse.objects.filter(task = task_id)
         #return TaskResponse.objects.all()
     def get_serializer_class(self):
         if self.request.method == 'POST':
             return CreateTaskResponseSerializer
         return TaskResponseSerializer
     def get_serializer_context(self, **kwargs):
-        return {'staff_id': self.request.user.staff.id, 'task_pk': self.kwargs['receivedtask_pk']}
+        return {'user_id': self.request.user.id, 'staff_role': self.request.user.staff.role ,'staff_id': self.request.user.staff.id}

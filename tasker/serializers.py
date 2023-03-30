@@ -1,6 +1,14 @@
 from rest_framework import serializers
 from .models import *
 
+
+class TaskResponseSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TaskResponse
+        fields ='__all__' 
+        
+
+
 class StaffSerializer (serializers.ModelSerializer):
     class Meta:
         model = Staff
@@ -11,10 +19,19 @@ class StaffSerializer (serializers.ModelSerializer):
 class TaskSerializer(serializers.ModelSerializer):
     class Meta:
         model = Task
-        fields = ['id','title', 'description', 'deadline','file', 'status','staff', 'receivers']
-    
+        fields = ['id','title', 'description', 'deadline','file', 'status','staff', 'receivers', 'task_response']
+    task_response = TaskResponseSerializer(TaskResponse)
     staff = StaffSerializer(Staff)
     receivers = StaffSerializer(Staff) 
+
+
+class TaskAdminSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Task
+        fields = ['title','deadline','status','staff', 'receivers']
+
+    staff = StaffSerializer(Staff)
+    receivers = StaffSerializer(Staff)
 
 
 class TaskViewSerializer(serializers.ModelSerializer):
@@ -49,7 +66,7 @@ class CreateTaskSerializer(serializers.ModelSerializer):
     def save(self, **kwargs):
         staff_id=self.context['staff_id']
         staff = Staff.objects.get(pk = staff_id)
-        task = Task.objects.create(staff=staff, **self.validated_data)
+        task = Task.objects.update(staff=staff, **self.validated_data) # Todo update or create methods
         return task
 
 # class TaskListSerializer(serializers.PrimaryKeyRelatedField):
@@ -60,24 +77,26 @@ class CreateTaskSerializer(serializers.ModelSerializer):
 
 
 
-# class TaskResponseForeignKeySerializer(serializers.PrimaryKeyRelatedField):
-#     def get_queryset(self):
-#         user_id=self.context['user_id']
-#         return Task.objects.filter(receivers__user_id=user_id)
-
+class TaskResponseForeignKeySerializer(serializers.PrimaryKeyRelatedField):
+    def get_queryset(self):
+        user_id=self.context['user_id']
+        if user_id == user_id:
+            return Task.objects.select_related('receivers__user').select_related('staff__user').filter(receivers__user_id=user_id)
 
 
 class CreateTaskResponseSerializer(serializers.ModelSerializer):
+    task = TaskResponseForeignKeySerializer()
     class Meta:
         model = TaskResponse
-        fields = ['title', 'description', 'file']
+        fields = ['title', 'description', 'file', 'task']
     def save(self, **kwargs):
-        task_pk = self.context['task_pk']
-        task = Task.objects.get(pk = task_pk)
+        # task_pk = self.context['task_pk']
+        # task = Task.objects.get(pk = task_pk)
         staff_id=self.context['staff_id']
-        staff = Staff.objects.get(pk = staff_id) # staff = staff.objects.get(pk = staff_id)
-        task = TaskResponse.objects.create(task= task,staff=staff, **self.validated_data)
+        staff = Staff.objects.get(pk = staff_id)
+        task = TaskResponse.objects.create(staff=staff, **self.validated_data)
         return task
+
 
 
 class TaskResponseSerializer(serializers.ModelSerializer):

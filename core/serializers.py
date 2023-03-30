@@ -1,7 +1,17 @@
 from rest_framework import serializers
 from core.models import User
 from rest_framework_simplejwt.serializers import TokenObtainSerializer
-from rest_framework_simplejwt.tokens import RefreshToken, SlidingToken, UntypedToken
+from rest_framework_simplejwt.tokens import RefreshToken
+from djoser.serializers import UserCreateSerializer, UserSerializer as BaseUserSerializer
+from tasker.serializers import StaffSerializer
+
+class UserSerializer (BaseUserSerializer):
+    class Meta(BaseUserSerializer.Meta):
+        model = User
+        fields = ('id', 'email', 'username','first_name', 'last_name','staff')
+    staff = StaffSerializer()
+
+
 
 class TokenObtainPairSerializer(TokenObtainSerializer):
     @classmethod
@@ -12,13 +22,13 @@ class TokenObtainPairSerializer(TokenObtainSerializer):
         refresh = self.get_token(self.user)
         data['refresh_token'] = str(refresh)
         data['access_token'] = str(refresh.access_token)
-        data['user_id'] = self.user.id
-        data['user_role'] = self.user.staff.role
-        data['user_name'] = (self.user.first_name + ' ' + self.user.last_name)
+        # data['user_id'] = self.user.id
+        # data['user_role'] = self.user.staff.role
+        # data['user_name'] = (self.user.first_name + ' ' + self.user.last_name)
         return data
 
-class UserSerializer (serializers.ModelSerializer):
-    class Meta: 
-        model = User
-        fields = '__all__'
+# class UserSerializer (serializers.ModelSerializer):
+#     class Meta: 
+#         model = User
+#         fields = '__all__'
 

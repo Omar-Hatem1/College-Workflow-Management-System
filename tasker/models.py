@@ -22,7 +22,7 @@ class Staff (models.Model):
     (Dr, 'Dr'),
     (TA, 'TA')
     ]
-    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE , related_name='staff')
     role = models.CharField(max_length=4, choices=role_types)
     title = models.CharField(max_length=4, choices=titles_types )
     # def get_full_name(self):
@@ -59,7 +59,7 @@ class Task(models.Model):
 
 class TaskResponse(models.Model):
     staff = models.ForeignKey(Staff, on_delete=models.CASCADE)
-    task = models.OneToOneField(Task, on_delete=models.CASCADE)
+    task = models.OneToOneField(Task, on_delete=models.CASCADE , related_name='task_response')
     title = models.CharField(null=True,blank=True, max_length=150)
     description = models.CharField(null=True,blank=True, max_length=150)
     file = models.FileField(upload_to='tasker/files/responses', null=True, blank=True)
