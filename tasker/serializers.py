@@ -17,6 +17,18 @@ class TaskSerializer(serializers.ModelSerializer):
     receivers = StaffSerializer(Staff) 
 
 
+class TaskViewSerializer(serializers.ModelSerializer):
+    # assigned_by = serializers.PrimaryKeyRelatedField(source='staff', read_only=True)
+    # assigned_to = serializers.PrimaryKeyRelatedField(source='receivers',read_only=True)
+    class Meta:
+        model = Task
+        fields = ['id','title', 'description', 'deadline','file', 'status','staff', 'receivers']
+    staff = StaffSerializer(Staff)
+    receivers = StaffSerializer(Staff)
+    #assigned_by = StaffSerializer(Staff) 
+    #assigned_to = StaffSerializer(Staff)
+    
+
 class ReceiversSerializer(serializers.PrimaryKeyRelatedField):
     def get_queryset(self):
         staff_role = self.context['staff_role']
@@ -46,29 +58,32 @@ class CreateTaskSerializer(serializers.ModelSerializer):
 #         if staff_id == staff_id:
 #             return Task.objects.filter(staff_id = self.receivers)
 
+
+
 # class TaskResponseForeignKeySerializer(serializers.PrimaryKeyRelatedField):
 #     def get_queryset(self):
 #         user_id=self.context['user_id']
 #         return Task.objects.filter(receivers__user_id=user_id)
 
 
-# class CreateTaskResponseSerializer(serializers.ModelSerializer):
-#     task = TaskResponseForeignKeySerializer()
-#     class Meta:
-#         model = TaskResponse
-#         fields = ['title', 'description', 'file', 'task']
-    
-#     def save(self, **kwargs):
-#         staff = Staff.objects.get(user_id=self.context['user_id'])
-#         task = TaskResponse.objects.create(staff=staff, **self.validated_data)
-#         return task
+
+class CreateTaskResponseSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TaskResponse
+        fields = ['title', 'description', 'file']
+    def save(self, **kwargs):
+        task_pk = self.context['task_pk']
+        task = Task.objects.get(pk = task_pk)
+        staff_id=self.context['staff_id']
+        staff = Staff.objects.get(pk = staff_id) # staff = staff.objects.get(pk = staff_id)
+        task = TaskResponse.objects.create(task= task,staff=staff, **self.validated_data)
+        return task
 
 
-
-# class TaskResponseSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = TaskResponse
-#         fields = ['title', 'description', 'file']
+class TaskResponseSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TaskResponse
+        fields ='__all__' 
         
 
 # class ReceiverListSerlizer (serializers.Serializer):

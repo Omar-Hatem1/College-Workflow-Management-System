@@ -25,8 +25,11 @@ class Staff (models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     role = models.CharField(max_length=4, choices=role_types)
     title = models.CharField(max_length=4, choices=titles_types )
+    # def get_full_name(self):
+    #     full_name = self.title + ' ' + self.user.first_name + ' ' + self.user.last_name 
+    #     return full_name 
     # def __str__(self) -> str:
-    #     return self.title + ' ' + self.user.first_name + ' ' + self.user.last_name   
+    #     return self.get_full_name()   
 
 
 class Task(models.Model):
@@ -43,9 +46,9 @@ class Task(models.Model):
     deadline = models.DateField(null=True, blank=True)
     file = models.FileField(upload_to='tasker/files/tasks', null=True, blank=True)
     status = models.BooleanField(default=False)
-    # TODO select the sender by default 
-    # TODO staff who will receive the task
-    # TODO If the sender in Dean that list should contain all Vice, Heads, Staff, and Secretary 
+    # TODO select the sender by default -> Done
+    # TODO staff who will receive the task -> Done
+    # TODO If the sender in Dean that list should contain all Vice, Heads, Staff, and Secretary -> Done
     staff = models.ForeignKey(Staff, on_delete=models.CASCADE) 
     receivers = models.ForeignKey(Staff,on_delete=models.CASCADE, related_name='receivers')
     date_added = models.DateTimeField(auto_now_add=True)

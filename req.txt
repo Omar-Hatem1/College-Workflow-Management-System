@@ -4,4 +4,5 @@ django-debug-toolbar
 django-cors-headers
 djangorestframework
 djangorestframework_simplejwt
+drf-nested-routers 
 
