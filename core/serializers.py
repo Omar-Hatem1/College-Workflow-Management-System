@@ -10,7 +10,23 @@ class UserSerializer (BaseUserSerializer):
         model = User
         fields = ('id', 'email', 'username','first_name', 'last_name','staff')
     staff = StaffSerializer()
-
+    def update(self, instance, validated_data): 
+    # update() method updates the dictionary with the elements from the another dictionary object or from an iterable of key/value pairs. 
+    # self is the instance of the serializer class.
+    # instance is the object instance that needs to be updated.
+    # validated_data is the dictionary of the validated data that was sent in the request.
+        staff_data = validated_data.pop('staff') 
+        # staff_data is the dictionary of the validated data that was sent in the request.
+        # pop method removes the key and returns the corresponding value.
+        staff = instance.staff
+        # staff is the object instance that needs to be updated.
+        instance = super().update(instance, validated_data)
+        #super method returns a proxy object (temporary object of the superclass) that allows us to access methods of the base class.
+        # update() method updates the dictionary with the elements from the another dictionary object or from an iterable of key/value pairs.
+        staff_serializer = StaffSerializer(staff, data=staff_data)
+        staff_serializer.is_valid(raise_exception=True)
+        staff_serializer.save()
+        return instance
 
 
 class TokenObtainPairSerializer(TokenObtainSerializer):

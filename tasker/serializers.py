@@ -6,7 +6,6 @@ class TaskResponseSerializer(serializers.ModelSerializer):
     class Meta:
         model = TaskResponse
         fields ='__all__' 
-        
 
 
 class StaffSerializer (serializers.ModelSerializer):
@@ -66,7 +65,7 @@ class CreateTaskSerializer(serializers.ModelSerializer):
     def save(self, **kwargs):
         staff_id=self.context['staff_id']
         staff = Staff.objects.get(pk = staff_id)
-        task = Task.objects.update(staff=staff, **self.validated_data) # Todo update or create methods
+        task = Task.objects.create(staff=staff, **self.validated_data) # Todo update or create methods
         return task
 
 # class TaskListSerializer(serializers.PrimaryKeyRelatedField):
