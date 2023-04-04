@@ -68,6 +68,22 @@ class CreateTaskSerializer(serializers.ModelSerializer):
         task = Task.objects.create(staff=staff, **self.validated_data) # Todo update or create methods
         return task
 
+
+class UpdateTaskSerializer(serializers.ModelSerializer):
+    receivers = ReceiversSerializer() # List of allowed receivers
+    class Meta:
+        model = Task
+        fields = ['title', 'description', 'deadline','file', 'status', 'receivers']
+
+    def update(self, instance, validated_data):
+        instance.title = validated_data.get('title', instance.title)
+        instance.description = validated_data.get('description', instance.description)
+        instance.deadline = validated_data.get('deadline', instance.deadline)
+        instance.file = validated_data.get('file', instance.file)
+        instance.status = validated_data.get('status', instance.status)
+        instance.receivers = validated_data.get('receivers', instance.receivers)
+        instance.save()
+        return instance
 # class TaskListSerializer(serializers.PrimaryKeyRelatedField):
 #     def get_queryset(self):
 #         staff_id = self.context['staff_id']
@@ -96,6 +112,18 @@ class CreateTaskResponseSerializer(serializers.ModelSerializer):
         task = TaskResponse.objects.create(staff=staff, **self.validated_data)
         return task
 
+class UpdateTaskResponseSerializer(serializers.ModelSerializer):
+    task = TaskResponseForeignKeySerializer()
+    class Meta:
+        model = TaskResponse
+        fields = ['title', 'description', 'file', 'task']
+    def update(self, instance, validated_data):
+        instance.title = validated_data.get('title', instance.title)
+        instance.description = validated_data.get('description', instance.description)
+        instance.file = validated_data.get('file', instance.file)
+        instance.task = validated_data.get('task', instance.task)
+        instance.save()
+        return instance
 
 
 class TaskResponseSerializer(serializers.ModelSerializer):

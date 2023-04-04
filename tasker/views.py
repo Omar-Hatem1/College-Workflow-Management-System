@@ -26,8 +26,10 @@ class SentTasksViewSet (ModelViewSet):
     def get_serializer_class(self):
         if self.request.method == 'GET':
             return TaskSerializer
-        elif self.request.method == 'POST' or self.request.method == 'PUT':
+        elif self.request.method == 'POST':
             return CreateTaskSerializer
+        elif self.request.method == 'PUT':
+            return UpdateTaskSerializer
         return TaskSerializer
     def get_serializer_context(self):
         #print({'user_id': self.request.user.id, 'staff_role': self.request.user.staff.role ,'staff_id': self.request.user.staff.id})
@@ -54,7 +56,7 @@ class ReceiversViewSet (ListModelMixin,RetrieveModelMixin, GenericViewSet):
             return Staff.objects.select_related('user').exclude(role = 'dean').exclude(role = 'vice').exclude(role =staff_role)
     
 
-class TaskResponseViewSet (ListModelMixin,DestroyModelMixin,UpdateModelMixin,CreateModelMixin, GenericViewSet):
+class TaskResponseViewSet (ListModelMixin,DestroyModelMixin,UpdateModelMixin,CreateModelMixin,RetrieveModelMixin, GenericViewSet):
     queryset= TaskResponse.objects.all()
     # def get_queryset(self, **kwargs):
     #     task_id = self.kwargs['response_pk']
@@ -64,6 +66,8 @@ class TaskResponseViewSet (ListModelMixin,DestroyModelMixin,UpdateModelMixin,Cre
     def get_serializer_class(self):
         if self.request.method == 'POST':
             return CreateTaskResponseSerializer
+        elif self.request.method == 'PUT':
+            return UpdateTaskResponseSerializer
         return TaskResponseSerializer
     def get_serializer_context(self, **kwargs):
         return {'user_id': self.request.user.id, 'staff_role': self.request.user.staff.role ,'staff_id': self.request.user.staff.id}
