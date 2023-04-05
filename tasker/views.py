@@ -7,7 +7,7 @@ from rest_framework.response import Response
 from .models import *
 from .serializers import *
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
-
+from tasker.permissions import CanSendTask
 
 
 class TaskAdminViewSet (ListModelMixin,RetrieveModelMixin,DestroyModelMixin, GenericViewSet):
@@ -17,10 +17,11 @@ class TaskAdminViewSet (ListModelMixin,RetrieveModelMixin,DestroyModelMixin, Gen
 
 class SentTasksViewSet (ModelViewSet):
     #queryset = Task.objects.select_related('receivers__user').select_related('staff__user').all()
+    permission_classes = [IsAuthenticated, CanSendTask ]
     def get_queryset(self):
         user_id = self.request.user.id
         if user_id == self.request.user.id:
-            return Task.objects.select_related('receivers__user').select_related('staff__user').filter(staff__user_id=user_id)
+            return Task.objects.select_related('receivers__user').select_related('staff__user').select_related('task_response').filter(staff__user_id=user_id)
 
     #serializer_class =TaskSerializer
     def get_serializer_class(self):

@@ -31,7 +31,6 @@ class Staff (models.Model):
     # def __str__(self) -> str:
     #     return self.get_full_name()   
 
-
 class Task(models.Model):
     # rejected = 'R'
     # accepted= 'A'
