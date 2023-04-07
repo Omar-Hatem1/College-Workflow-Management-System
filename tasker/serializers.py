@@ -2,6 +2,10 @@ from rest_framework import serializers
 from .models import *
 
 
+class TaskFilterSerializer (serializers.ModelSerializer):
+    class Meta:
+        model = Task
+        fields = ['id','title', 'description', 'deadline','file', 'status','staff', 'receivers']
 class TaskResponseSerializer(serializers.ModelSerializer):
     class Meta:
         model = TaskResponse

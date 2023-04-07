@@ -11,6 +11,7 @@ router.register('received-tasks', views.ReceivedTasksViewSet, basename='received
 router.register('receivers', views.ReceiversViewSet, basename='receivers')
 router.register('tasks-responses', views.TaskResponseViewSet, basename='response')
 router.register('tasks', views.TaskAdminViewSet, basename='tasks')
+#router.register('tasksfilter',views.TaskFilterViewSet, basename='tasksfilter')
 
 
 # tasks_router=NestedDefaultRouter(router, 'received-tasks', lookup = 'receivedtask')

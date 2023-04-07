@@ -5,4 +5,4 @@ django-cors-headers
 djangorestframework
 djangorestframework_simplejwt
 drf-nested-routers 
-
+django-filter
