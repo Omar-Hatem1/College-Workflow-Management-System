@@ -39,7 +39,8 @@ class TaskViewSerializer(serializers.ModelSerializer):
     # assigned_to = serializers.PrimaryKeyRelatedField(source='receivers',read_only=True)
     class Meta:
         model = Task
-        fields = ['id','title', 'description', 'deadline','file', 'status','staff', 'receivers']
+        fields = ['id','title', 'description', 'deadline','file', 'status','staff', 'receivers', 'task_response']
+    task_response = TaskResponseSerializer(TaskResponse)
     staff = StaffSerializer(Staff)
     receivers = StaffSerializer(Staff)
     #assigned_by = StaffSerializer(Staff) 
