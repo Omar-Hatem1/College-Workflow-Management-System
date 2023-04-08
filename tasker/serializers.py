@@ -65,7 +65,9 @@ class CreateTaskSerializer(serializers.ModelSerializer):
     def save(self, **kwargs):
         staff_id=self.context['staff_id']
         staff = Staff.objects.get(pk = staff_id)
-        task = Task.objects.create(staff=staff, **self.validated_data) # Todo update or create methods -> done
+        task = Task.objects.create(staff=staff, **self.validated_data) 
+        # Todo update or create methods -> done
+        # Todo returning the task data
         return task
 
 class UpdateTaskSerializer(serializers.ModelSerializer):
