@@ -44,11 +44,16 @@ class SentTasksViewSet (ModelViewSet):
         return {'user_id': self.request.user.id, 'staff_role': self.request.user.staff.role ,'staff_id': self.request.user.staff.id}
 
 class ReceivedTasksViewSet (ListModelMixin,RetrieveModelMixin, GenericViewSet):
-    serializer_class =TaskViewSerializer # Todo : Create a serializer for this
+    serializer_class =TaskViewSerializer
+    pagination_class= DefaultPagination #PageNumberPagination
+    filter_backends = [DjangoFilterBackend ,SearchFilter, OrderingFilter]
+    filterset_fields = ['status']
+    search_fields = ['title']
+    ordering_fields = ['last_modified'] # Todo : Create a serializer for this
     def get_queryset(self):
         user_id = self.request.user.id
         if user_id == self.request.user.id:
-            return Task.objects.select_related('receivers__user').select_related('staff__user').filter(receivers__user_id=user_id)
+            return Task.objects.select_related('receivers__user').select_related('staff__user').select_related('task_response').filter(receivers__user_id=user_id)
 
 class ReceiversViewSet (ListModelMixin,RetrieveModelMixin, GenericViewSet):
     #queryset = Staff.objects.select_related('user').all()

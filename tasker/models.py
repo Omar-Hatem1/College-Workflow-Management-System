@@ -41,7 +41,7 @@ class Task(models.Model):
     # ]
     
     title = models.CharField(null=True,blank=True, max_length=150)
-    description = models.CharField(null=True,blank=True, max_length=150)
+    description = models.TextField(null=True,blank=True)
     deadline = models.DateField(null=True, blank=True)
     file = models.FileField(upload_to='tasker/files/tasks', null=True, blank=True)
     status = models.BooleanField(default=False)
