@@ -24,7 +24,13 @@ class TaskAdminViewSet (ListModelMixin,RetrieveModelMixin,DestroyModelMixin, Gen
     ordering_fields = ['last_modified'] 
 class SentTasksViewSet (ModelViewSet):
     #queryset = Task.objects.select_related('receivers__user').select_related('staff__user').all()
+    serializer_class =TaskViewSerializer
     permission_classes = [IsAuthenticated, CanSendTask ]
+    pagination_class= DefaultPagination
+    filter_backends = [DjangoFilterBackend ,SearchFilter, OrderingFilter]
+    filterset_fields = ['status']
+    search_fields = ['title']
+    ordering_fields = ['last_modified'] # Todo : Create a serializer for this
     def get_queryset(self):
         user_id = self.request.user.id
         if user_id == self.request.user.id:
