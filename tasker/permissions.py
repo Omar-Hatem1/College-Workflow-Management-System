@@ -6,7 +6,7 @@ class CanSendTask(BasePermission):
     """
 
     def has_permission(self, request, view):
-        return bool(request.user and request.user.staff.role != 'dr')
+        return bool(request.user and request.user.staff.role != 'dr' and request.user.staff.role != 'ta')
 
 class CanReceiveTask(BasePermission):
     """
