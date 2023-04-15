@@ -3,7 +3,6 @@ from .models import *
 
 
 
-
 @admin.register(Staff)
 class StaffAdmin (admin.ModelAdmin):
     list_display = ['user', 'role']
@@ -11,7 +10,6 @@ class StaffAdmin (admin.ModelAdmin):
     
 @admin.register(Task)
 class TaskAdmin (admin.ModelAdmin):
-    #fields = ['title', 'description', 'deadline', 'file', 'status', 'staff']
     pass
 
 @admin.register(TaskResponse)

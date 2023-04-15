@@ -1,28 +1,16 @@
 from django.urls import path, include
-#from rest_framework.routers import DefaultRouter
-from rest_framework_nested.routers import DefaultRouter, NestedDefaultRouter
-from . import views
-#from rest_framework_nested.routers import DefaultRouter , NestedDefaultRouter
+from rest_framework_nested.routers import DefaultRouter 
+from tasker.views import * 
 
 
 router = DefaultRouter()
-router.register('sent-tasks', views.SentTasksViewSet, basename='sent-tasks')
-router.register('received-tasks', views.ReceivedTasksViewSet, basename='received-tasks')
-router.register('receivers', views.ReceiversViewSet, basename='receivers')
-router.register('tasks-responses', views.TaskResponseViewSet, basename='response')
-router.register('tasks', views.TaskAdminViewSet, basename='tasks')
-#router.register('tasksfilter',views.TaskFilterViewSet, basename='tasksfilter')
-
-
-# tasks_router=NestedDefaultRouter(router, 'received-tasks', lookup = 'receivedtask')
-# tasks_router.register('response', views.TaskResponseViewSet, basename='task-response')
-
-
-
+router.register('sent-tasks',SentTasksViewSet, basename='sent-tasks')
+router.register('received-tasks',ReceivedTasksViewSet, basename='received-tasks')
+router.register('receivers',ReceiversViewSet, basename='receivers')
+router.register('tasks-responses',TaskResponseViewSet, basename='response')
+router.register('tasks',TaskAdminViewSet, basename='tasks')
 
 
 urlpatterns = [
     path ('', include(router.urls)),
-    #path ('', include(tasks_router.urls)),
-    #path ('receivers/', views.ReceiversList.as_view())
 ]
