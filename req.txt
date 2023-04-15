@@ -8,3 +8,4 @@ drf-nested-routers
 django-filter
 Pillow
 gunicorn
+waitress
