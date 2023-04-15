@@ -40,7 +40,7 @@ class Task(models.Model):
     last_modified = models.DateTimeField(auto_now=True)
 
     class Meta:
-        ordering = ['date_added']
+        ordering = ['-date_added']
     def __str__(self) -> str:
         return self.title
 
