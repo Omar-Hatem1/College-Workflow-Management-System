@@ -48,7 +48,7 @@ class TaskResponse(models.Model):
     staff = models.ForeignKey(Staff, on_delete=models.CASCADE)
     task = models.OneToOneField(Task, on_delete=models.CASCADE , related_name='task_response')
     title = models.CharField(null=True,blank=True, max_length=150)
-    description = models.CharField(null=True,blank=True, max_length=150)
+    description = models.TextField(null=True,blank=True)
     file = models.FileField(upload_to='tasker/files/responses', null=True, blank=True)
     date_added = models.DateTimeField(auto_now_add=True)
     last_modified = models.DateTimeField(auto_now=True)

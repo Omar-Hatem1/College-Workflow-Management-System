@@ -2,7 +2,7 @@ from .common import *
 
 SECRET_KEY = 'django-insecure-ki2j_&zb!dq%0d90ezdj^b(b57qsmpp40+oomc97dxo+4s63l-'
 
-ALLOWED_HOSTS = ['web-production-c1b7.up.railway.app']
+ALLOWED_HOSTS = ['web-production-c1b7.up.railway.app', '127.0.0.1']
 DEBUG = True
 
 # DATABASES = {
