@@ -65,7 +65,10 @@ class ReceiversViewSet (ReadOnlyModelViewSet):
 
 class TaskResponseViewSet (ModelViewSet):
     permission_classes = [CanReceiveTask]
-    queryset= TaskResponse.objects.all()
+    def get_queryset(self):
+        staff_id = self.request.user.staff.id
+        if staff_id:
+            return TaskResponse.objects.filter(staff=staff_id)
     def get_serializer_class(self):
         if self.request.method == 'POST':
             return CreateTaskResponseSerializer
