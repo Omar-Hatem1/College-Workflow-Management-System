@@ -1,4 +1,4 @@
-from settings.common import *
+from .common import *
 
 SECRET_KEY = 'django-insecure-ki2j_&zb!dq%0d90ezdj^b(b57qsmpp40+oomc97dxo+4s63l-'
 

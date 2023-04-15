@@ -8,7 +8,10 @@ media
 token.txt
 Pipfile
 Pipfile.lock
-
+1db.sqlite3
+requirements.txt
+.bashrc
+.gitignore
 # Backup files # 
 *.bak 
 
