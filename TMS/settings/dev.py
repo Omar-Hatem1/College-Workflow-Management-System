@@ -24,4 +24,5 @@ DATABASES = {
 CSRF_TRUSTED_ORIGINS = [
     'https://tms-production.up.railway.app/',
     'http://127.0.0.1',
+    'https://tms-wf.netlify.app/',
 ]
