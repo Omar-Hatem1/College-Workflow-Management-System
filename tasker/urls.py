@@ -9,8 +9,8 @@ router.register('received-tasks',ReceivedTasksViewSet, basename='received-tasks'
 router.register('receivers',ReceiversViewSet, basename='receivers')
 router.register('tasks-responses',TaskResponseViewSet, basename='response')
 router.register('tasks',TaskAdminViewSet, basename='tasks')
-
-
+router.register('vacationapply', DoctorAssistantLeaveAPI, basename= 'leaveapply')
+#router.register('vacationlist', DeanViceDeanHODLeaveAPI, basename= 'leavelist')
 urlpatterns = [
     path ('', include(router.urls)),
 ]

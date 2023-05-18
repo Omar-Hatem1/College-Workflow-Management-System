@@ -1,4 +1,5 @@
 from rest_framework.serializers import ModelSerializer, StringRelatedField
+from rest_framework import serializers
 from tasker.models import *
 
 
@@ -62,3 +63,30 @@ class UpdateTaskResponseSerializer(ModelSerializer):
         model = TaskResponse
         fields = ['title', 'description', 'file', 'task']
 
+class LeaveRequestSerializer(ModelSerializer):
+    class Meta:
+        model = LeaveRequest
+        fields = ['id', 'leave_type', 'receiver', 'start_date', 'end_date', 'num_days', 'created_at']
+    def save(self, **kwargs):
+        staff=self.context['staff']
+        staff = Staff.objects.get(pk = staff.id)
+        self.sender_role = staff.role
+        self.sender_department = staff.Department
+        self.sender_college = staff.college
+        self.sender_title = staff.title
+        self.sender_name = staff.name
+        leave = LeaveRequest.objects.create(sender_id=staff, sender_role = staff.role, **self.validated_data) 
+        return leave
+    
+class CustomField(serializers.Field):
+    def to_representation(self, value):
+        request = self.context.get('request', None)
+        if request:
+            return request.user.username
+        return None
+    
+class ShowLeavesSerializer(ModelSerializer):
+    sender_name = CustomField()
+    class Meta:
+        model = LeaveRequest
+        fields = ['sender_name', 'sender_title', 'sender_role', 'sender_college', 'sender_department', 'leave_type', 'start_date', 'end_date', 'num_days', 'created_at']
