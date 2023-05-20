@@ -1,0 +1,11 @@
+django
+djoser
+django-debug-toolbar
+django-cors-headers
+djangorestframework
+djangorestframework_simplejwt
+drf-nested-routers 
+django-filter
+Pillow
+gunicorn
+waitress
