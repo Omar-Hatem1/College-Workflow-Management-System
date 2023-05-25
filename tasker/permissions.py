@@ -18,8 +18,12 @@ class CanReceiveTask(BasePermission):
     
 class IsDoctorOrAssistant(BasePermission):
     def has_permission(self, request, view):
-       bool(request.user and (request.user.staff.role == 'Doctor' or request.user.staff.role == 'Assistant'))
+       return bool(request.user and (request.user.staff.role == 'Doctor' or request.user.staff.role == 'Assistant'))
 
 class IsDeanViceDeanHOD(BasePermission):
     def has_permission(self, request, view):
-        bool(request.user and (request.user.staff.role == 'Dean' or request.user.staff.role == 'Vice_Dean' or request.user.staff.role == 'Head_of_department'))
+        return bool(request.user and (request.user.staff.role == 'Dean' or request.user.staff.role == 'Vice_Dean' or request.user.staff.role == 'Head_of_department'))
+    
+class IsSecretaryAdmin(BasePermission):
+    def has_permission(self, request, view):
+        return bool(request.user and (request.user.staff.role == 'Secretary' or request.user.staff.role == 'Admin'))
