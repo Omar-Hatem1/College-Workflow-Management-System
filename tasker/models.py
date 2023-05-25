@@ -18,13 +18,6 @@ class Staff (models.Model):
      ]
     
     #roles
-    Dean= 'Dean',
-    Vice_Dean= 'v.Dean',
-    Head_of_department= 'Head',
-    Doctor='Doc',
-    Secretary= 'sec',
-    Assistant ='Assistant',
-    Admin = 'Admin'
     Roles_choices= [
      ('Dean', 'Dean'),
      ('Vice_Dean', 'V.Dean'),
@@ -54,7 +47,6 @@ class Staff (models.Model):
     title = models.CharField(max_length=40, choices=Titles_Choices)
     Department = models.CharField(max_length=40, choices=Dep_CHOICES)
     college = models.CharField(max_length=50, default="CSIS")
-    name = models.CharField(max_length=100)
 
 class Task(models.Model):
     title = models.CharField(null=True,blank=True, max_length=150)
@@ -97,7 +89,6 @@ class LeaveRequest(models.Model):
     )
 
     leave_type = models.CharField(max_length=20, choices=LEAVE_TYPES)
-    receiver = models.CharField(max_length=50)
     sender_id = models.ForeignKey(Staff, on_delete = models.CASCADE)
     sender_name = models.CharField(max_length=100)
     sender_role = models.CharField(max_length=20, blank= True, null=True)
@@ -108,15 +99,15 @@ class LeaveRequest(models.Model):
     end_date = models.DateField()
     num_days = models.PositiveIntegerField()
     created_at = models.DateTimeField(auto_now_add=True)
-    status = models.CharField(max_length=10, choices=STATUS_CHOICES, null=True)
-    approved_by = models.CharField(max_length=20, null=True)
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default = 'Pending')
+    approve = models.CharField(max_length=20, choices=STATUS_CHOICES, default= 'Pending')
     dean_approved = models.BooleanField(null=True)
     vice_dean_approved = models.BooleanField(null=True)
     head_of_department_approved = models.BooleanField(null=True)
     
-    # def save(self, *args, **kwargs):
-    #     if self.start_date > self.end_date:
-    #         raise ValueError("Start date cannot be later than end date.")
-    #     self.num_days = (self.end_date - self.start_date).days + 1
-    #     super(LeaveRequest, self).save(*args, **kwargs)
+    def save(self, *args, **kwargs):
+        if self.start_date >= self.end_date:
+            raise ValueError("Start date cannot be later than or equal end date.")
+        self.num_days = (self.end_date - self.start_date).days + 1
+        super(LeaveRequest, self).save(*args, **kwargs)
 
