@@ -66,7 +66,7 @@ class UpdateTaskResponseSerializer(ModelSerializer):
 class LeaveRequestSerializer(ModelSerializer):
     class Meta:
         model = LeaveRequest
-        fields = ['id', 'leave_type', 'receiver', 'start_date', 'end_date', 'num_days', 'created_at']
+        fields = ['id', 'leave_type', 'start_date', 'end_date', 'created_at']
     def save(self, **kwargs):
         staff=self.context['staff']
         staff = Staff.objects.get(pk = staff.id)
@@ -81,4 +81,14 @@ class LeaveRequestSerializer(ModelSerializer):
 class ShowLeavesSerializer(ModelSerializer):
     class Meta:
         model = LeaveRequest
-        fields = ['sender_name', 'sender_title', 'sender_role', 'sender_college', 'sender_department', 'leave_type', 'start_date', 'end_date', 'num_days', 'created_at']
+        fields = ['sender_name', 'sender_title', 'sender_role', 'sender_college', 'status', 'sender_department', 'leave_type', 'start_date', 'end_date', 'num_days', 'created_at']
+
+class UpdateLeaveSerializer(ModelSerializer):
+    class Meta:
+        model = LeaveRequest
+        fields = ['approve']
+
+class LeaveResponseSerializer(ModelSerializer):
+    class Meta:
+        model = LeaveRequest
+        fields = ['id', 'sender_name', 'sender_department', 'sender_role', 'leave_type', 'start_date', 'end_date', 'status', 'dean_approved', 'vice_dean_approved', 'head_of_department_approved']
