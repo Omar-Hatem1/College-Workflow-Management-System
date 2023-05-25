@@ -12,6 +12,8 @@ router.register('tasks',TaskAdminViewSet, basename='tasks')
 router.register('vacationapply', DoctorAssistantLeaveAPI, basename= 'leaveapply')
 #router.register('vacationlist', DeanViceDeanHODLeaveAPI, basename= 'leavelist')
 router.register('list', LeavesList, basename='allLeaves')
+router.register('leaverequests', DeanViceHOD, basename='leavesreq')
+router.register('acceptedleaves', SecretaryLeavesView, basename='ACLeaves')
 urlpatterns = [
     path ('', include(router.urls)),
 ]
