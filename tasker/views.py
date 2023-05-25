@@ -1,7 +1,7 @@
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet, ViewSetMixin
-from rest_framework.mixins import  DestroyModelMixin
+from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet, ViewSetMixin, GenericViewSet
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
+from rest_framework.mixins import  DestroyModelMixin, ListModelMixin, RetrieveModelMixin, UpdateModelMixin
 from rest_framework.filters import SearchFilter, OrderingFilter
 from tasker.models import *
 from tasker.serializers import *
@@ -95,22 +95,6 @@ class DoctorAssistantLeaveAPI(ModelViewSet):
     def get_queryset(self):
         sender = self.request.user.staff.id
         return LeaveRequest.objects.filter(sender_id=sender)
-    
-    def create(self, request, *args, **kwargs):
-        data = {}
-        for i in request.data:
-            data[i] = request.data[i]
-        data['sender_name'] = request.user.first_name + " " + request.user.last_name
-        print(data)
-        serializer = self.get_serializer(data=data)
-        serializer.is_valid(raise_exception=True)
-        if(not CustomUser.objects.annotate(full_name=Concat('first_name', Value(' '), 'last_name')).filter(full_name=request.data['receiver']).exists()):
-            return Response(status=status.HTTP_404_NOT_FOUND)
-        self.perform_create(serializer)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-    
-    def perform_create(self, serializer):
-        serializer.save()
 
     def get_serializer_class(self):
         if self.request.method == 'POST':
@@ -125,52 +109,56 @@ class LeavesList (ReadOnlyModelViewSet):
     serializer_class = StaffSerializer
     def get_queryset(self):
         senderDep = self.request.user.staff.Department
-        dean = Staff.objects.select_related('user').filter(role = 'dean')
-        vice_dean = Staff.objects.select_related('user').filter(role = 'vice')
-        hod = Staff.objects.select_related('user').filter(Department = senderDep, role = 'head')
+        dean = Staff.objects.select_related('user').filter(role = 'Dean')
+        vice_dean = Staff.objects.select_related('user').filter(role = 'Vice_Dean')
+        hod = Staff.objects.select_related('user').filter(Department = senderDep, role = 'Head_of_department')
         List = dean.union(vice_dean)
         List = List.union(hod)
         return List
 
-# class DeanViceDeanHODLeaveAPI(ModelViewSet):
-#     permission_classes = [IsAuthenticated, IsDeanViceDeanHOD]
-#     def get(self, request):
-#         # Get the user making the request
-#         user_role = request.user.role
-#         if user_role == 'Head of Department':
-#             # If the user is a head of department, filter the leave requests by department
-#             leave_requests = LeaveRequest.objects.filter(sender__department=request.user.department)
-#         else:
-#             # If the user is a dean or vice dean, show all leave requests
-#             leave_requests = LeaveRequest.objects.all()
-#         # Serialize the leave requests and return them
-#         serializer = LeaveRequestSerializer(leave_requests, many=True)
-#         return Response(serializer.data)
+class DeanViceHOD(ListModelMixin, RetrieveModelMixin, UpdateModelMixin, GenericViewSet):
+    def get_queryset(self):
+        if(self.request.user.staff.role == 'Head_of_department'):
+            senderDep = self.request.user.staff.Department
+            return LeaveRequest.objects.filter(Department = senderDep)
+        return LeaveRequest.objects.all()
+    
+    def get_serializer_class(self):
+        if self.request.method == 'PUT':
+            return UpdateLeaveSerializer
+        return LeaveResponseSerializer
+    def update(self, request, *args, **kwargs):
+        leave_id = kwargs['pk']
+        leave = LeaveRequest.objects.get(id=leave_id)
+        leave.approve = request.data['approve']
 
-#     def patch(self, request, pk):
-#         # Get the data from the request
-#         data = request.data
-#         # Get the leave request object
-#         leave_request = LeaveRequest.objects.get(id=pk)
+        if(self.request.user.staff.role == 'Dean'):
+            if(leave.approve == 'Accepted'):
+                leave.dean_approved = True
+            else:
+                leave.dean_approved = False
+
+        elif(self.request.user.staff.role == 'Vice_Dean'):
+            if(leave.approve == 'Accepted'):
+                leave.vice_dean_approved = True
+            else:
+                leave.vice_dean_approved = False
+        else:
+            if(leave.approve == 'Accepted'):
+                leave.head_of_department_approved = True
+            else:
+                leave.head_of_department_approved = False
         
-#         # Check if the user making the request is authorized to respond to this leave request
-#         user_role = request.user.role
-#         if user_role == 'Dean':
-#             leave_request.dean_approved = True
-#         elif user_role == 'Vice_Dean':
-#             leave_request.dean_approved = True
-#         elif user_role == 'Head_of_department':
-#             # If the user is a head of department, they can only respond to leave requests from their own department
-#             if leave_request.sender.department == request.user.department:
-#                 leave_request.head_of_department_approved = True
-        
-#         # Check if the leave request can be marked as accepted (only if it's not already accepted)
-#         if leave_request.status == 'Pending' and (leave_request.dean_approved == True or leave_request.vice_dean_approved == True) or (leave_request.head_of_department_approved == True and (leave_request.dean_approved == True or leave_request.vice_dean_approved == True)):
-#             leave_request.status = 'Accepted'
-#         elif leave_request.status == 'Pending' and (leave_request.dean_approved == False or leave_request.vice_dean_approved == False):
-#             leave_request.status = 'Refused'
-#         # Save the updated leave request object
-#         leave_request.save()
-#         # Serialize the updated leave request and return it
-#         serializer = LeaveRequestSerializer(leave_request)
-#         return Response(serializer.data)
+        if(leave.dean_approved == True or leave.vice_dean_approved == True):
+            leave.status = 'Accepted'
+
+        elif(leave.dean_approved == False or leave.vice_dean_approved == False):
+            leave.status = 'Refused'
+            
+        leave.save()
+        return Response({'success': 'Leave status updated successfully'})
+    
+class SecretaryLeavesView(ReadOnlyModelViewSet):
+    queryset = LeaveRequest.objects.filter(status = 'Accepted')
+    serializer_class = LeaveResponseSerializer
+    permission_classes = [IsSecretaryAdmin]
