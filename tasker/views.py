@@ -1,6 +1,6 @@
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet, ViewSetMixin, GenericViewSet
-from rest_framework.permissions import IsAdminUser, IsAuthenticated
+from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet, GenericViewSet
+from rest_framework.permissions import IsAdminUser
 from rest_framework.mixins import  DestroyModelMixin, ListModelMixin, RetrieveModelMixin, UpdateModelMixin
 from rest_framework.filters import SearchFilter, OrderingFilter
 from tasker.models import *
@@ -8,14 +8,6 @@ from tasker.serializers import *
 from tasker.permissions import *
 from tasker.pagination import DefaultPagination
 from rest_framework.response import Response
-from rest_framework import status
-from django.db.models import Q
-from rest_framework.generics import ListCreateAPIView,ListAPIView
-from django.contrib.auth import get_user_model
-from django.db.models import CharField, Value
-from django.db.models.functions import Concat
-
-CustomUser = get_user_model()
 
 class TaskAdminViewSet (DestroyModelMixin,ReadOnlyModelViewSet):
     queryset = Task.objects.select_related('receivers__user').select_related('staff__user').all()
@@ -65,16 +57,17 @@ class ReceiversViewSet (ReadOnlyModelViewSet):
     def get_queryset(self):
         staff_role = self.request.user.staff.role
         senderDep = self.request.user.staff.Department
-        if staff_role == 'Dean':
+        if staff_role == 'dean':
             return Staff.objects.select_related('user').exclude(role=staff_role)
-        elif staff_role == 'Vice_Dean':
-            return Staff.objects.select_related('user').exclude(role = 'Dean').exclude(role =staff_role)
-        elif staff_role == 'Head_of_department':
-            return Staff.objects.select_related('user').exclude(role = 'Dean').exclude(role = 'Vice_Dean').exclude(role =staff_role).filter(Department = senderDep)
+        elif staff_role == 'vice':
+            return Staff.objects.select_related('user').exclude(role = 'dean').exclude(role =staff_role)
+        elif staff_role == 'head':
+            return Staff.objects.select_related('user').exclude(role = 'dean').exclude(role = 'vice').exclude(role =staff_role).filter(Department = senderDep)
     
 
 class TaskResponseViewSet (ModelViewSet):
     permission_classes = [CanReceiveTask]
+    pagination_class= DefaultPagination
     def get_queryset(self):
         staff_id = self.request.user.staff.id
         if staff_id:
@@ -109,16 +102,17 @@ class LeavesList (ReadOnlyModelViewSet):
     serializer_class = StaffSerializer
     def get_queryset(self):
         senderDep = self.request.user.staff.Department
-        dean = Staff.objects.select_related('user').filter(role = 'Dean')
-        vice_dean = Staff.objects.select_related('user').filter(role = 'Vice_Dean')
-        hod = Staff.objects.select_related('user').filter(Department = senderDep, role = 'Head_of_department')
+        dean = Staff.objects.select_related('user').filter(role = 'dean')
+        vice_dean = Staff.objects.select_related('user').filter(role = 'vice')
+        hod = Staff.objects.select_related('user').filter(Department = senderDep, role = 'head')
         List = dean.union(vice_dean)
         List = List.union(hod)
         return List
 
 class DeanViceHOD(ListModelMixin, RetrieveModelMixin, UpdateModelMixin, GenericViewSet):
+    permission_classes = [IsDeanViceDeanHOD]
     def get_queryset(self):
-        if(self.request.user.staff.role == 'Head_of_department'):
+        if(self.request.user.staff.role == 'head'):
             senderDep = self.request.user.staff.Department
             return LeaveRequest.objects.filter(Department = senderDep)
         return LeaveRequest.objects.all()
@@ -132,13 +126,13 @@ class DeanViceHOD(ListModelMixin, RetrieveModelMixin, UpdateModelMixin, GenericV
         leave = LeaveRequest.objects.get(id=leave_id)
         leave.approve = request.data['approve']
 
-        if(self.request.user.staff.role == 'Dean'):
+        if(self.request.user.staff.role == 'dean'):
             if(leave.approve == 'Accepted'):
                 leave.dean_approved = True
             else:
                 leave.dean_approved = False
 
-        elif(self.request.user.staff.role == 'Vice_Dean'):
+        elif(self.request.user.staff.role == 'vice'):
             if(leave.approve == 'Accepted'):
                 leave.vice_dean_approved = True
             else:
