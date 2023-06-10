@@ -1,5 +1,4 @@
 from rest_framework.serializers import ModelSerializer, StringRelatedField
-from rest_framework import serializers
 from tasker.models import *
 
 
@@ -91,4 +90,4 @@ class UpdateLeaveSerializer(ModelSerializer):
 class LeaveResponseSerializer(ModelSerializer):
     class Meta:
         model = LeaveRequest
-        fields = ['id', 'sender_name', 'sender_department', 'sender_role', 'leave_type', 'start_date', 'end_date', 'status', 'dean_approved', 'vice_dean_approved', 'head_of_department_approved']
+        fields = ['id', 'sender_name', 'sender_department', 'sender_role', 'leave_type', 'start_date', 'end_date', 'num_days', 'status', 'dean_approved', 'vice_approved', 'head_approved']
