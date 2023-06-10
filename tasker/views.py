@@ -134,19 +134,19 @@ class DeanViceHOD(ListModelMixin, RetrieveModelMixin, UpdateModelMixin, GenericV
 
         elif(self.request.user.staff.role == 'vice'):
             if(leave.approve == 'Accepted'):
-                leave.vice_dean_approved = True
+                leave.vice_approved = True
             else:
-                leave.vice_dean_approved = False
+                leave.vice_approved = False
         else:
             if(leave.approve == 'Accepted'):
-                leave.head_of_department_approved = True
+                leave.head_approved = True
             else:
-                leave.head_of_department_approved = False
+                leave.head_approved = False
         
-        if(leave.dean_approved == True or leave.vice_dean_approved == True):
+        if(leave.dean_approved == True or leave.vice_approved == True):
             leave.status = 'Accepted'
 
-        elif(leave.dean_approved == False or leave.vice_dean_approved == False):
+        elif(leave.dean_approved == False or leave.vice_approved == False):
             leave.status = 'Refused'
             
         leave.save()
