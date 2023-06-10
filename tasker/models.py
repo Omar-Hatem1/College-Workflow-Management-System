@@ -19,13 +19,13 @@ class Staff (models.Model):
     
     #roles
     Roles_choices= [
-     ('Dean', 'Dean'),
-     ('Vice_Dean', 'V.Dean'),
-     ('Head_of_department', 'Head'),
-     ('Doctor', 'Doctor'),
-     ('Secretary','Sec'),
-     ('Assistant','Assistant'),
-     ('Admin', 'Admin'),
+     ('dean', 'Dean'),
+     ('vice', 'V.Dean'),
+     ('head', 'Head'),
+     ('doctor', 'Doctor'),
+     ('secretary','Sec'),
+     ('assistant','Assistant'),
+     ('admin', 'Admin'),
     ]
     #Titles
     Professor='Prof',
@@ -102,8 +102,8 @@ class LeaveRequest(models.Model):
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default = 'Pending')
     approve = models.CharField(max_length=20, choices=STATUS_CHOICES, default= 'Pending')
     dean_approved = models.BooleanField(null=True)
-    vice_dean_approved = models.BooleanField(null=True)
-    head_of_department_approved = models.BooleanField(null=True)
+    vice_approved = models.BooleanField(null=True)
+    head_approved = models.BooleanField(null=True)
     
     def save(self, *args, **kwargs):
         if self.start_date >= self.end_date:
