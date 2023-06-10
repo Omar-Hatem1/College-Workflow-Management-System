@@ -6,7 +6,7 @@ class CanSendTask(BasePermission):
     """
 
     def has_permission(self, request, view):
-        return bool(request.user and request.user.staff.role != 'Admin' and request.user.staff.role != 'Doctor' and request.user.staff.role != 'Assistant')
+        return bool(request.user and request.user.staff.role != 'admin' and request.user.staff.role != 'doctor' and request.user.staff.role != 'assistant')
 
 class CanReceiveTask(BasePermission):
     """
@@ -14,16 +14,16 @@ class CanReceiveTask(BasePermission):
     """
 
     def has_permission(self, request, view):
-        return bool(request.user and request.user.staff.role != 'Admin' and  request.user.staff.role != 'Dean')
+        return bool(request.user and request.user.staff.role != 'admin' and  request.user.staff.role != 'dean')
     
 class IsDoctorOrAssistant(BasePermission):
     def has_permission(self, request, view):
-       return bool(request.user and (request.user.staff.role == 'Doctor' or request.user.staff.role == 'Assistant'))
+       return bool(request.user and (request.user.staff.role == 'doctor' or request.user.staff.role == 'assistant'))
 
 class IsDeanViceDeanHOD(BasePermission):
     def has_permission(self, request, view):
-        return bool(request.user and (request.user.staff.role == 'Dean' or request.user.staff.role == 'Vice_Dean' or request.user.staff.role == 'Head_of_department'))
+        return bool(request.user and (request.user.staff.role == 'dean' or request.user.staff.role == 'vice' or request.user.staff.role == 'head'))
     
 class IsSecretaryAdmin(BasePermission):
     def has_permission(self, request, view):
-        return bool(request.user and (request.user.staff.role == 'Secretary' or request.user.staff.role == 'Admin'))
+        return bool(request.user and (request.user.staff.role == 'secretary' or request.user.staff.role == 'admin'))
