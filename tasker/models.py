@@ -98,12 +98,13 @@ class LeaveRequest(models.Model):
     start_date = models.DateField()
     end_date = models.DateField()
     num_days = models.PositiveIntegerField()
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateField(auto_now_add=True)
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default = 'Pending')
     approve = models.CharField(max_length=20, choices=STATUS_CHOICES, default= 'Pending')
     dean_approved = models.BooleanField(null=True)
     vice_approved = models.BooleanField(null=True)
     head_approved = models.BooleanField(null=True)
+    reciever_department = models.CharField(max_length=30)
     
     def save(self, *args, **kwargs):
         if self.start_date >= self.end_date:
