@@ -1,6 +1,6 @@
-from rest_framework.serializers import ModelSerializer, StringRelatedField
+from rest_framework.serializers import ModelSerializer, StringRelatedField, SerializerMethodField
 from tasker.models import *
-
+from django.db.models import Q
 
 
 class TaskResponseSerializer(ModelSerializer):
@@ -69,18 +69,19 @@ class LeaveRequestSerializer(ModelSerializer):
     def save(self, **kwargs):
         staff=self.context['staff']
         staff = Staff.objects.get(pk = staff.id)
-        self.sender_role = staff.role
-        self.sender_department = staff.Department
-        self.sender_college = staff.college
-        self.sender_title = staff.title
-        self.sender_name = staff.user
-        leave = LeaveRequest.objects.create(sender_id=staff, sender_role = staff.role, sender_name = staff.user, sender_title = staff.title, sender_department = staff.Department, **self.validated_data) 
+        hod = Staff.objects.filter(Q(role = 'head') & Q(Department = staff.Department)).first()
+        hod = hod.user.first_name + " " + hod.user.last_name
+        leave = LeaveRequest.objects.create(sender_id=staff, sender_role = staff.role, sender_name = staff.user, sender_title = staff.title, sender_department = staff.Department, reciever_department = hod, **self.validated_data) 
         return leave
     
 class ShowLeavesSerializer(ModelSerializer):
+    dean = SerializerMethodField()
     class Meta:
         model = LeaveRequest
-        fields = ['sender_name', 'sender_title', 'sender_role', 'sender_college', 'status', 'sender_department', 'leave_type', 'start_date', 'end_date', 'num_days', 'created_at']
+        fields = ['sender_name', 'sender_title', 'sender_role', 'sender_college', 'dean', 'reciever_department', 'status', 'sender_department', 'leave_type', 'start_date', 'end_date', 'num_days', 'created_at']
+    def get_dean(self, obj):
+        dean = Staff.objects.filter(role = 'dean').last()
+        return dean.user.first_name + " " + dean.user.last_name
 
 class UpdateLeaveSerializer(ModelSerializer):
     class Meta:
