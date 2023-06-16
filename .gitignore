@@ -3,3 +3,7 @@ __pycache__
 *.pyc
 static
 Procfile
+db.sqlite3
+.env
+Pipfile
+Pipfile.lock
