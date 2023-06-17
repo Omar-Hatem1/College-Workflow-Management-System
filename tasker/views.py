@@ -113,8 +113,8 @@ class DeanViceHOD(ListModelMixin, RetrieveModelMixin, UpdateModelMixin, GenericV
     permission_classes = [IsDeanViceDeanHOD]
     def get_queryset(self):
         if(self.request.user.staff.role == 'head'):
-            senderDep = self.request.user.staff.Department
-            return LeaveRequest.objects.filter(Department = senderDep)
+            recieverDep = self.request.user.staff.Department
+            return LeaveRequest.objects.filter(sender_department = recieverDep)
         return LeaveRequest.objects.all()
     
     def get_serializer_class(self):
