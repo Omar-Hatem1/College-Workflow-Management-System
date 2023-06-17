@@ -15,16 +15,14 @@ DEBUG = True
 #     }
 # }
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
-
-DATABASES = { 
-    'default':  parse(env('DATABASE_URL')) 
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
 }
+
+
 
 CSRF_TRUSTED_ORIGINS = [
     'http://127.0.0.1',
