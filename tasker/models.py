@@ -104,7 +104,7 @@ class LeaveRequest(models.Model):
     dean_approved = models.BooleanField(null=True)
     vice_approved = models.BooleanField(null=True)
     head_approved = models.BooleanField(null=True)
-    reciever_department = models.CharField(max_length=30)
+    reciever_from_same_department = models.CharField(max_length=30)
     
     def save(self, *args, **kwargs):
         if self.start_date >= self.end_date:
