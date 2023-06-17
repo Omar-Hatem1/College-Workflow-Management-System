@@ -95,4 +95,4 @@ class LeaveResponseSerializer(ModelSerializer):
         return dean.user.first_name + " " + dean.user.last_name
     class Meta:
         model = LeaveRequest
-        fields = ['id', 'sender_name', 'sender_department', 'sender_role', 'leave_type', 'start_date', 'end_date', 'sender_department', 'dean', 'reciever_from_same_department', 'end_date', 'num_days', 'status', 'dean_approved', 'vice_approved', 'head_approved']
+        fields = ['id', 'sender_name', 'sender_department', 'sender_role', 'sender_college', 'leave_type', 'start_date', 'end_date', 'sender_department', 'dean', 'reciever_from_same_department', 'end_date', 'num_days', 'status', 'dean_approved', 'vice_approved', 'head_approved']
