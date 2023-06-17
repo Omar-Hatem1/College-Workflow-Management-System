@@ -58,9 +58,9 @@ class ReceiversViewSet (ReadOnlyModelViewSet):
         staff_role = self.request.user.staff.role
         senderDep = self.request.user.staff.Department
         if staff_role == 'dean':
-            return Staff.objects.select_related('user').exclude(role=staff_role)
+            return Staff.objects.select_related('user').exclude(role=staff_role).exclude(Q(role = 'admin') | Q(role = 'secretary'))
         elif staff_role == 'vice':
-            return Staff.objects.select_related('user').exclude(role = 'dean').exclude(role =staff_role)
+            return Staff.objects.select_related('user').exclude(role = 'dean').exclude(role =staff_role).exclude(Q(role = 'admin') | Q(role = 'secretary'))
         elif staff_role == 'head':
             return Staff.objects.select_related('user').exclude(role = 'dean').exclude(role = 'vice').exclude(role =staff_role).filter(Department = senderDep)
     
