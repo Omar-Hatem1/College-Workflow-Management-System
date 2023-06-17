@@ -71,14 +71,14 @@ class LeaveRequestSerializer(ModelSerializer):
         staff = Staff.objects.get(pk = staff.id)
         hod = Staff.objects.filter(Q(role = 'head') & Q(Department = staff.Department)).first()
         hod = hod.user.first_name + " " + hod.user.last_name
-        leave = LeaveRequest.objects.create(sender_id=staff, sender_role = staff.role, sender_name = staff.user, sender_title = staff.title, sender_department = staff.Department, reciever_department = hod, **self.validated_data) 
+        leave = LeaveRequest.objects.create(sender_id=staff, sender_role = staff.role, sender_name = staff.user, sender_title = staff.title, sender_department = staff.Department, reciever_from_same_department = hod, **self.validated_data) 
         return leave
     
 class ShowLeavesSerializer(ModelSerializer):
     dean = SerializerMethodField()
     class Meta:
         model = LeaveRequest
-        fields = ['sender_name', 'sender_title', 'sender_role', 'sender_college', 'dean', 'reciever_department', 'status', 'sender_department', 'leave_type', 'start_date', 'end_date', 'num_days', 'created_at']
+        fields = ['sender_name', 'sender_title', 'sender_role', 'sender_college', 'dean', 'reciever_from_same_department', 'status', 'sender_department', 'leave_type', 'start_date', 'end_date', 'num_days', 'created_at']
     def get_dean(self, obj):
         dean = Staff.objects.filter(role = 'dean').last()
         return dean.user.first_name + " " + dean.user.last_name
