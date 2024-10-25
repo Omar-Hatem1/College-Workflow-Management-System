@@ -5,5 +5,6 @@ static
 Procfile
 db.sqlite3
 .env
+myenv
 Pipfile
 Pipfile.lock
